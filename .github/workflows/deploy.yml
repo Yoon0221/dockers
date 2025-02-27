@@ -27,7 +27,7 @@ jobs:
           java-version: 21
           distribution: 'temurin'
 
-      # 3. secrets 내용을 읽어 yml 파일과 keystore 파일을 동시에 생성
+      # 3. secrets 내용을 읽어 yml 파일 생성
       - name: Create application.yml and decrypt keystore.p12
         run: |
           sed -i "s|\${DOMAIN}|${{ secrets.DOMAIN }}|g" ./src/main/resources/application.yml
@@ -48,7 +48,7 @@ jobs:
           sed -i "s|\${NAVER_CLIENT_ID}|${{ secrets.NAVER_CLIENT_ID }}|g" ./src/main/resources/application.yml
           sed -i "s|\${NAVER_CLIENT_SECRET}|${{ secrets.NAVER_CLIENT_SECRET }}|g" ./src/main/resources/application.yml
 
-# 4. Gradle 빌드 (테스트 제외)
+      # 4. Gradle 빌드 (테스트 제외)
       - name: Build with Gradle
         run: |
           chmod +x ./gradlew
@@ -85,8 +85,15 @@ jobs:
             # Git 리포지토리 경로로 이동
             cd /home/${EC2_USER}/docker
 
-            # 최신 코드 가져오기
-            git pull origin main
+            # 최신 코드 가져오기 (main 또는 release 브랜치)
+            git fetch origin
+            if [ "$GITHUB_REF" == "refs/heads/main" ]; then
+              git checkout main
+              git pull origin main
+            elif [ "$GITHUB_REF" == "refs/heads/release" ]; then
+              git checkout release
+              git pull origin release
+            fi
 
             # Docker 로그인
             echo "${{ secrets.DOCKER_PASSWORD }}" | docker login -u "${DOCKER_USERNAME}" --password-stdin
