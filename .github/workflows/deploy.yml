@@ -47,10 +47,8 @@ jobs:
           
           sed -i "s|\${NAVER_CLIENT_ID}|${{ secrets.NAVER_CLIENT_ID }}|g" ./src/main/resources/application.yml
           sed -i "s|\${NAVER_CLIENT_SECRET}|${{ secrets.NAVER_CLIENT_SECRET }}|g" ./src/main/resources/application.yml
-          
-          echo "${{ secrets.KEYSTORE_FILE }}" | base64 --decode > ./src/main/resources/keystore.p12
 
-      # 4. Gradle 빌드 (테스트 제외)
+# 4. Gradle 빌드 (테스트 제외)
       - name: Build with Gradle
         run: |
           chmod +x ./gradlew
@@ -81,9 +79,6 @@ jobs:
           chmod 600 ec2-key.pem
           mkdir -p ~/.ssh
           ssh-keyscan -H ${EC2_HOST} >> ~/.ssh/known_hosts
-
-          # EC2 서버에 keystore 파일 복사
-          scp -i ec2-key.pem ./src/main/resources/keystore.p12 ${EC2_USER}@${EC2_HOST}:/home/${EC2_USER}/docker/keystore.p12
 
           # EC2 서버에서 작업 실행
           ssh -i ec2-key.pem -t ${EC2_USER}@${EC2_HOST} << EOF
