@@ -3,15 +3,15 @@ version: '3.8'
 services:
   app:
     container_name: spring_app
-    image: jiyoon0221/my-spring-app
+    image: jiyoon0221/my-spring-app  # CI/CD에서 빌드된 이미지 사용
     restart: always
     ports:
-      - "443:8080"
+      - "443:8080"  # 443 포트를 8080으로 포워딩 (HTTPS 지원)
     environment:
-      - SPRING_PROFILES_ACTIVE=prod
+      - SPRING_PROFILES_ACTIVE=prod  # 프로덕션 환경 설정
     networks:
       - my_network
 
 networks:
   my_network:
-    driver: bridge
+    driver: bridge  # 브릿지 네트워크 사용
