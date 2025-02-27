@@ -6,7 +6,7 @@ services:
     image: jiyoon0221/my-spring-app  # CI/CD에서 빌드된 이미지 사용
     restart: always
     ports:
-      - "443:8080"  # 443 포트를 8080으로 포워딩 (HTTPS 지원)
+      - "443:443"  # 443 포트를 443으로 포워딩 (HTTPS 지원)
     environment:
       - SPRING_PROFILES_ACTIVE=prod  # 프로덕션 환경 설정
     networks:
