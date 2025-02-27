@@ -92,11 +92,10 @@ jobs:
             # 최신 코드 가져오기
             git pull origin main
 
-            # 최신 Docker 이미지 가져오기
+            # Docker 로그인
             echo "${{ secrets.DOCKER_PASSWORD }}" | docker login -u "${DOCKER_USERNAME}" --password-stdin
 
             # 기존 컨테이너 중지 및 삭제
-            cd /home/${EC2_USER}/docker
             docker-compose down
 
             # 새 컨테이너 실행
