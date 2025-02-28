@@ -81,7 +81,6 @@ jobs:
           EC2_USER: ${{ secrets.EC2_USER }}
           EC2_KEY: ${{ secrets.EC2_KEY }}
           DOCKER_USERNAME: ${{ secrets.DOCKER_USERNAME }}
-          GIT_NAME: ${{ secrets.GIT_NAME }}
         run: |
           echo "${EC2_KEY}" > ec2-key.pem
           chmod 600 ec2-key.pem
@@ -89,7 +88,7 @@ jobs:
           ssh-keyscan -H ${EC2_HOST} >> ~/.ssh/known_hosts
 
           ssh -i ec2-key.pem -t ${EC2_USER}@${EC2_HOST} << EOF
-            cd /home/${EC2_USER}/${GIT_NAME}
+            cd /home/${EC2_USER}/dockers
 
             git fetch origin
             if [ "\$GITHUB_REF" == "refs/heads/main" ]; then
