@@ -89,7 +89,7 @@ jobs:
             # 생성된 파일의 권한 설정 (읽기 권한 부여)
             chmod 644 /home/${EC2_USER}/docker/src/main/resources/keystore.p12
             # 생성된 파일 확인
-            ls -al /home/${EC2_USER}/docker/src/main/resources/ 
+            ls -al /home/${EC2_USER}/docker/src/main/resources/   
 
             # Git 리포지토리 경로로 이동
             cd /home/${EC2_USER}/docker
