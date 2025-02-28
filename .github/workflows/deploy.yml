@@ -83,9 +83,11 @@ jobs:
 
           # EC2 서버에서 작업 실행
           ssh -i ec2-key.pem -t ${EC2_USER}@${EC2_HOST} << EOF
+          
             # EC2에서 키스토어 파일 생성 (Base64 디코딩)
             echo "${{ secrets.KEY_STORE_BASE64 }}" | base64 --decode > /home/${EC2_USER}/docker/src/main/resources/keystore.p12
-
+            # 생성된 파일의 권한 설정 (읽기/쓰기 권한 부여)
+            chmod 600 /home/${EC2_USER}/docker/src/main/resources/keystore.p12
             # 생성된 파일 확인
             ls -al /home/${EC2_USER}/docker/src/main/resources/
 
@@ -113,6 +115,6 @@ jobs:
             docker-compose up -d --force-recreate
           EOF
 
-      # 3. EC2 서버 키 삭제
+      # 2. EC2 서버 키 삭제
       - name: Clean up EC2 key
         run: rm -f ec2-key.pem
