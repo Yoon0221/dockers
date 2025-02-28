@@ -47,13 +47,13 @@ jobs:
           sed -i "s|\${NAVER_CLIENT_ID}|${{ secrets.NAVER_CLIENT_ID }}|g" ./src/main/resources/application.yml
           sed -i "s|\${NAVER_CLIENT_SECRET}|${{ secrets.NAVER_CLIENT_SECRET }}|g" ./src/main/resources/application.yml
           
-          # Base64로 인코딩된 키스토어를 디코딩하여 application.yml이 있는 위치에 keystore.p12 파일 생성
-          # keystore.p12 파일이 생성될 경로 확인
-          echo "파일 생성 경로 : home/${{ secrets.EC2_HOST }}/docker/src/main/resources/keystore.p12"
+          # keystore 파일 생성
+          # 파일 경로 확인
+          echo "파일 생성 경로 : /home/${{ secrets.EC2_HOST }}/docker/src/main/resources/keystore.p12"
           # Base64 디코딩하여 keystore.p12 생성
-          echo "${{ secrets.KEY_STORE_BASE64 }}" | base64 --decode > home/${{ secrets.EC2_HOST }}/docker/src/main/resources/keystore.p12
+          echo "${{ secrets.KEY_STORE_BASE64 }}" | base64 --decode > /home/${{ secrets.EC2_HOST }}/docker/src/main/resources/keystore.p12
           # 결과 확인
-          ls -al home/${{ secrets.EC2_HOST }}/docker/src/main/resources/
+          ls -al /home/${{ secrets.EC2_HOST }}/docker/src/main/resources/
 
 
       # 4. Gradle 빌드 (테스트 제외)
