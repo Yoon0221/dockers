@@ -81,15 +81,6 @@ jobs:
           mkdir -p ~/.ssh
           ssh-keyscan -H ${EC2_HOST} >> ~/.ssh/known_hosts
 
-      # 2. EC2 서버에서 작업 실행
-      - name: Deploy to EC2 and create keystore
-        run: |
-          # EC2 서버 키 설정 및 권한 설정
-          echo "${{ secrets.EC2_KEY }}" > ec2-key.pem
-          chmod 600 ec2-key.pem
-          mkdir -p ~/.ssh
-          ssh-keyscan -H ${EC2_HOST} >> ~/.ssh/known_hosts
-
           # EC2 서버에서 작업 실행
           ssh -i ec2-key.pem -t ${EC2_USER}@${EC2_HOST} << EOF
             # EC2에서 키스토어 파일 생성 (Base64 디코딩)
