@@ -10,9 +10,9 @@ withdrawn:
 # ?? ??
 server:
   ssl:
-    key-store: classpath:keystore.p12  # Base64 ??? ? ??? ?? ??
-    key-store-type: PKCS12
-    key-store-password: asdttycc
+    key-store: "${KEY_STORE}"  # Base64 ??? ? ??? ?? ??
+    key-store-type: "${KEY_STORE_TYPE}"
+    key-store-password: "${KEY_STORE_PASS}"
   port: 443  # HTTPS ?? ??
 
 # spring ???
