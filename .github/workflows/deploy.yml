@@ -86,8 +86,8 @@ jobs:
           
             # EC2에서 키스토어 파일 생성 (Base64 디코딩)
             echo "${{ secrets.KEY_STORE_BASE64 }}" | base64 --decode > /home/${EC2_USER}/docker/src/main/resources/keystore.p12
-            # 생성된 파일의 권한 설정 (읽기/쓰기 권한 부여)
-            chmod 600 /home/${EC2_USER}/docker/src/main/resources/keystore.p12
+            # 생성된 파일의 권한 설정 (읽기 권한 부여)
+            chmod 644 /home/${EC2_USER}/docker/src/main/resources/keystore.p12
             # 생성된 파일 확인
             ls -al /home/${EC2_USER}/docker/src/main/resources/
 
