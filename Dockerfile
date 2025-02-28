@@ -7,9 +7,5 @@ WORKDIR /app
 # 3. JAR 파일 복사
 COPY build/libs/*.jar app.jar
 
-# 4. keystore.p12 파일 복사
-ARG KEY_STORE_PATH
-COPY ${KEY_STORE_PATH} /app/keystore.p12
-
-# 5. 컨테이너 실행 명령어
+# 4. 컨테이너 실행 명령어
 CMD ["java", "-jar", "app.jar"]

@@ -9,7 +9,6 @@ services:
       - "443:443"
     environment:
       - SPRING_PROFILES_ACTIVE=prod
-      - KEY_STORE_PATH=/app/keystore.p12  # keystore.p12 파일 경로
     networks:
       - my_network
 
