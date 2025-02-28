@@ -10,7 +10,7 @@ withdrawn:
 # ?? ??
 server:
   ssl:
-    key-store: "${KEY_STORE}"  # Base64 ??? ? ??? ?? ??
+    key-store: file:/home/ubuntu/docker/src/main/resources/keystore.p12  # Base64 ??? ? ??? ?? ??
     key-store-type: "${KEY_STORE_TYPE}"
     key-store-password: "${KEY_STORE_PASS}"
   port: 443  # HTTPS ?? ??
