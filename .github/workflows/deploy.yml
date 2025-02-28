@@ -48,9 +48,11 @@ jobs:
           sed -i "s|\${NAVER_CLIENT_SECRET}|${{ secrets.NAVER_CLIENT_SECRET }}|g" ./src/main/resources/application.yml
           
           # Base64로 인코딩된 키스토어를 디코딩하여 application.yml이 있는 위치에 keystore.p12 파일 생성
-          echo "${{ secrets.KEY_STORE_BASE64 }}" | base64 --decode > ./src/main/resources/keystore.p12      
+          echo "디버깅 : keystore.p12 파일 생성 중..."
+          echo "${{ secrets.KEY_STORE_BASE64 }}" | base64 --decode > ./src/main/resources/keystore.p12
+          echo "파일 생성 완료"
 
-        # 4. Gradle 빌드 (테스트 제외)
+      # 4. Gradle 빌드 (테스트 제외)
       - name: Build with Gradle
         run: |
           chmod +x ./gradlew
