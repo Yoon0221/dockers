@@ -1,7 +1,6 @@
 # 공통 URL 관리
-base-url: "http://localhost:8080"  # 배포 시 실제 도메인으로 변경 예정
-redirect-url: "http://localhost:8080/swagger-ui/index.html" # 소셜 로그인 성공 후 리다이렉트 되는 주소 -> 프론트 주소로 변경 예정
-
+base-url: "https://${DOMAIN}"  # 배포 시 실제 도메인으로 변경 예정
+redirect-url: "${REDIRECT_URL}"  # 소셜 로그인 성공 후 리다이렉트 되는 주소 -> 프론트 주소로 변경 예정
 
 # 기타 설정
 withdrawn:
@@ -10,8 +9,11 @@ withdrawn:
 
 # 포트 설정
 server:
-  port: 8080
-
+  ssl:
+    key-store: "${KEY_STORE}"  # Base64 디코딩 후 생성된 파일 경로
+    key-store-type: "${KEY_STORE_TYPE}"
+    key-store-password: "${KEY_STORE_PASS}"
+  port: 443  # HTTPS 포트 설정
 
 # spring 설정들
 spring:
@@ -21,21 +23,20 @@ spring:
       enabled: true
       force: true
 
-
   # 기본 시간대 설정 ( 베이스 엔티티에는 미적용 상태 )
   time-zone: Asia/Seoul
 
   # DB 설정
   datasource:
-    url: jdbc:mysql://localhost:3306/mydb
-    username: root
-    password: kang0205~!itskkkcake1221ps
+    url: jdbc:mysql://yoondb.cnwom4kocpo9.ap-northeast-2.rds.amazonaws.com:3306/yoondb?serverTimezone=Asia/Seoul&characterEncoding=UTF-8
+    username: "${DB_USERNAME}"
+    password: "${DB_PASSWORD}"
     driver-class-name: com.mysql.cj.jdbc.Driver
 
   # jpa 설정
   jpa:
     hibernate:
-      ddl-auto: create # 엔티티 확정 후에는 update 로 변경 예정
+      ddl-auto: update
     properties:
       hibernate:
         format_sql: true
@@ -45,7 +46,7 @@ spring:
 
   # jwt 설정
   jwt:
-    secret: "hadgfsfsfsfsssfsfssfsfsfsffasadad1234567890"
+    secret: "${JWT_SECRET}"
     expiration:
       access-token: 3600  # 1 day
       refresh-token: 604800  # 7 days
@@ -60,18 +61,18 @@ spring:
 
         registration:
           google:
-            client-id: 99902361774-6374rph82cs4mjbjqb1c9evp61pl3h2b.apps.googleusercontent.com
-            client-secret: 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
+            client-id: "${GOOGLE_CLIENT_ID}"
+            client-secret: "${GOOGLE_CLIENT_SECRET}"
             scope:
               - profile
               - email
-            redirect-uri: ${base-url}/authorization/oauth2/code/google
+            redirect-uri: https://${DOMAIN}/login/oauth2/code/kakao
 
           kakao:
-            client-id: 28aafe4adf59867d844dce294b455c6c
-            client-secret: JuOWB45mg985VegMqx7bmthrXNEb9l6O
+            client-id: "${KAKAO_CLIENT_ID}"
+            client-secret: "${KAKAO_CLIENT_SECRET}"
             authorization-grant-type: authorization_code
-            redirect-uri: ${base-url}/authorization/oauth2/code/kakao
+            redirect-uri: https://${DOMAIN}/login/oauth2/code/kakao
             scope:
               - account_email
               - profile_nickname
@@ -79,14 +80,14 @@ spring:
             client-authentication-method: client_secret_post
 
           naver:
-            client-id: HGFL3G6ki_OOV3XqA8TP
-            client-secret: opHypdrNau
+            client-id: "${NAVER_CLIENT_ID}"
+            client-secret: "${NAVER_CLIENT_SECRET}"
             scope:
               - name
               - email
             client-name: Naver
             authorization-grant-type: authorization_code
-            redirect-uri: ${base-url}/authorization/oauth2/code/naver
+            redirect-uri: https://${DOMAIN}/login/oauth2/code/kakao
 
         provider:
           kakao:
