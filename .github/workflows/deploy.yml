@@ -27,7 +27,7 @@ jobs:
           distribution: 'temurin'
 
       # 3. secrets 내용을 읽어 yml 파일 생성
-      - name: Create application.yml and decrypt keystore.p12
+      - name: Create application.yml
         run: |
           # application.yml 파일에서 시크릿 값 바꾸기
           sed -i "s|\${DOMAIN}|${{ secrets.DOMAIN }}|g" ./src/main/resources/application.yml
@@ -46,14 +46,6 @@ jobs:
           sed -i "s|\${KAKAO_CLIENT_SECRET}|${{ secrets.KAKAO_CLIENT_SECRET }}|g" ./src/main/resources/application.yml
           sed -i "s|\${NAVER_CLIENT_ID}|${{ secrets.NAVER_CLIENT_ID }}|g" ./src/main/resources/application.yml
           sed -i "s|\${NAVER_CLIENT_SECRET}|${{ secrets.NAVER_CLIENT_SECRET }}|g" ./src/main/resources/application.yml
-          
-          # keystore 파일 생성
-          # 파일 경로 확인
-          echo "파일 생성 경로 : /home/${{ secrets.EC2_USER }}/docker/src/main/resources/keystore.p12"
-          # Base64 디코딩하여 keystore.p12 생성
-          echo "${{ secrets.KEY_STORE_BASE64 }}" | base64 --decode > /home/${{ secrets.EC2_USER }}/docker/src/main/resources/keystore.p12
-          # 결과 확인
-          ls -al /home/${{ secrets.EC2_USER }}/docker/src/main/resources/
 
 
       # 4. Gradle 빌드 (테스트 제외)
@@ -69,28 +61,33 @@ jobs:
           docker build -t ${{ secrets.DOCKER_USERNAME }}/my-spring-app .
           docker push ${{ secrets.DOCKER_USERNAME }}/my-spring-app
 
+
   deploy:
-    runs-on: ubuntu-latest  # 배포 환경 설정 (우분투 사용)
-    needs: build  # 빌드 작업이 완료된 후 배포 작업 실행
-    if: github.ref == 'refs/heads/main' || github.ref == 'refs/heads/release'  # main 또는 release 브랜치에서만 배포 실행
+    runs-on: ubuntu-latest
 
     steps:
-      # EC2 서버에 Docker Compose로 배포
-      - name: Deploy on EC2 with Docker Compose
-        env:
-          EC2_HOST: ${{ secrets.EC2_HOST }}  # EC2 호스트 주소
-          EC2_USER: ${{ secrets.EC2_USER }}  # EC2 사용자명
-          EC2_KEY: ${{ secrets.EC2_KEY }}  # EC2 키 파일
-          DOCKER_USERNAME: ${{ secrets.DOCKER_USERNAME }}  # Docker Hub 사용자명
+      # 1. 저장소 클론
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      # 2. EC2 서버 키 설정 및 권한 설정
+      - name: Set up EC2 key and permissions
         run: |
-          # EC2 서버 키 설정 및 권한 설정
-          echo "${EC2_KEY}" > ec2-key.pem
+          echo "${{ secrets.EC2_KEY }}" > ec2-key.pem
           chmod 600 ec2-key.pem
           mkdir -p ~/.ssh
           ssh-keyscan -H ${EC2_HOST} >> ~/.ssh/known_hosts
 
-          # EC2 서버에서 작업 실행
+      # 3. EC2 서버에서 작업 실행
+      - name: Deploy to EC2 and create keystore
+        run: |
           ssh -i ec2-key.pem -t ${EC2_USER}@${EC2_HOST} << EOF
+            # EC2에서 키스토어 파일 생성 (Base64 디코딩)
+            echo "${{ secrets.KEY_STORE_BASE64 }}" | base64 --decode > /home/${EC2_USER}/docker/src/main/resources/keystore.p12
+
+            # 생성된 파일 확인
+            ls -al /home/${EC2_USER}/docker/src/main/resources/
+
             # Git 리포지토리 경로로 이동
             cd /home/${EC2_USER}/docker
 
@@ -115,5 +112,6 @@ jobs:
             docker-compose up -d --force-recreate
           EOF
 
-          # EC2 서버 키 삭제
-          rm -f ec2-key.pem
+      # 4. EC2 서버 키 삭제
+      - name: Clean up EC2 key
+        run: rm -f ec2-key.pem
