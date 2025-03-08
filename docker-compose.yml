@@ -6,7 +6,7 @@ services:
     image: jiyoon0221/my-spring-app:latest  # 올바른 Docker 이미지명
     restart: always
     ports:
-      - "443:443"
+      - "443:8080"  # 외부 443 포트 -> 내부 8080 포트로 매핑
     environment:
       - SPRING_PROFILES_ACTIVE=prod
     networks:
