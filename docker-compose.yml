@@ -5,8 +5,6 @@ services:
     container_name: spring_app
     image: jiyoon0221/my-spring-app:latest  # 올바른 Docker 이미지명
     restart: always
-    extra_hosts:
-      - "jiyoon.r-e.kr:52.79.102.229"  # 외부 도메인과 연결될 IP 주소
     ports:
       - "443:443"  # 외부 443 포트 -> 내부 8080 포트로 매핑
     environment:
